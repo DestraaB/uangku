@@ -17,7 +17,7 @@
                     <p class="text-muted">Buat akun untuk memulai</p>
                 </div>
 
-                <!-- Menampilkan Error Validasi Form (Misal: email sudah ada, password kurang 6 karakter) -->
+                <!-- Menampilkan Error Validasi Form -->
                 <?= validation_errors('<div class="alert alert-danger text-center">', '</div>'); ?>
 
                 <form action="<?= base_url('auth/proses_register'); ?>" method="POST">
@@ -45,6 +45,5 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>

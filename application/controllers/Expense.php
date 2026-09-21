@@ -72,4 +72,11 @@ class Expense extends CI_Controller {
             redirect('expense/tambah'); 
         }
     }
+
+    public function tambah() {
+        // Memuat antarmuka form tambah pengeluaran beserta navigasinya
+        $this->load->view('templates/header');
+        $this->load->view('expense/tambah');
+        $this->load->view('templates/footer');
+    }
 }

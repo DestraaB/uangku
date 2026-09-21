@@ -48,4 +48,10 @@ class Expense_model extends CI_Model {
         
         return $this->db->get()->result(); // Mengembalikan banyak data (array of objects)
     }
+
+    // Fungsi ini yang dicari oleh Controller untuk menyimpan data
+    public function insert_data($table, $data) {
+        $this->db->insert($table, $data);
+        return $this->db->insert_id();
+    }
 }

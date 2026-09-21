@@ -86,4 +86,35 @@ class Auth extends CI_Controller {
         $this->session->sess_destroy();
         redirect('auth/login');
     }
+    // Fungsi saat link dari email diklik
+public function reset_password() {
+    $token = $this->input->get('token');
+    
+    // Cek apakah tokennya asli dan ada di database
+    $user = $this->db->get_where('users', ['reset_token' => $token])->row();
+
+    if ($user) {
+        $data['token'] = $token;
+        // Arahkan ke form pengisian password baru
+        $this->load->view('auth/form_reset', $data); 
+    } else {
+        echo "Token tidak valid atau sudah kadaluarsa.";
+    }
+}
+
+// Fungsi saat tombol simpan password ditekan
+public function proses_password_baru() {
+    $token = $this->input->post('token');
+    $password_baru = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+
+    // Update password dan kosongkan kembali kolom token
+    $this->db->where('reset_token', $token);
+    $this->db->update('users', [
+        'password' => $password_baru,
+        'reset_token' => NULL 
+    ]);
+
+    $this->session->set_flashdata('pesan', '<div class="alert alert-success">Password berhasil diubah! Silakan login kembali.</div>');
+    redirect('auth/login');
+}
 }

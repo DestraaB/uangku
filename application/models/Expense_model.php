@@ -59,4 +59,18 @@ class Expense_model extends CI_Model {
         $this->db->insert($table, $data);
         return $this->db->insert_id();
     }
+
+    // Menghitung total semua pengeluaran user (sejak awal akun dibuat)
+    public function get_total_lifetime($id_user) {
+        $this->db->select_sum('nominal');
+        $this->db->where('id_user', $id_user);
+        $query = $this->db->get('expenses')->row();
+        return ($query->nominal != null) ? $query->nominal : 0;
+    }
+
+    // Menghitung berapa kali user melakukan transaksi
+    public function count_transaksi($id_user) {
+        $this->db->where('id_user', $id_user);
+        return $this->db->count_all_results('expenses');
+    }
 }

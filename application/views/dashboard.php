@@ -80,6 +80,8 @@
             </div>
         </div>
 
+        
+
         <!-- Modal (Pop-up) Gambar Struk untuk setiap transaksi -->
         <div class="modal fade" id="strukModal<?= $row->id_expense; ?>" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -99,5 +101,12 @@
         <?php if(empty($riwayat)): ?>
             <div class="text-center text-muted my-4">Belum ada transaksi dicatat.</div>
         <?php endif; ?>
+
+        <!-- Tambahkan tombol ini di bawah daftar list-group riwayat pada dashboard.php -->
+    <div class="text-center mt-3">
+        <a href="<?= base_url('expense/riwayat'); ?>" class="text-decoration-none fw-bold">
+            Lihat Semua Riwayat 
+        </a>
+    </div>
     </div>
 </div>

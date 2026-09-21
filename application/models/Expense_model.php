@@ -38,15 +38,20 @@ class Expense_model extends CI_Model {
     }
 
     // Fungsi untuk menarik daftar riwayat transaksi
-    public function get_riwayat_transaksi($id_user) {
+    public function get_riwayat_transaksi($id_user, $limit = null) {
         $this->db->select('expenses.*, categories.nama_kategori');
         $this->db->from('expenses');
-        $this->db->join('categories', 'categories.id_kategori = expenses.id_kategori'); // Mengambil nama kategori
+        $this->db->join('categories', 'categories.id_kategori = expenses.id_kategori');
         $this->db->where('expenses.id_user', $id_user);
-        $this->db->order_by('expenses.tanggal', 'DESC'); // Urutkan dari yang terbaru
+        $this->db->order_by('expenses.tanggal', 'DESC');
         $this->db->order_by('expenses.id_expense', 'DESC');
         
-        return $this->db->get()->result(); // Mengembalikan banyak data (array of objects)
+        // Jika limit diisi, batasi jumlah datanya
+        if ($limit != null) {
+            $this->db->limit($limit);
+        }
+        
+        return $this->db->get()->result();
     }
 
     // Fungsi ini yang dicari oleh Controller untuk menyimpan data

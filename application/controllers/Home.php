@@ -27,8 +27,8 @@ class Home extends CI_Controller {
         $data['total_sekunder'] = $this->Expense_model->get_total_per_kategori($id_user, 2);
         $data['total_tersier']  = $this->Expense_model->get_total_per_kategori($id_user, 3);
 
-        // Tambahkan baris ini di bawah pemanggilan data total_tersier
-        $data['riwayat'] = $this->Expense_model->get_riwayat_transaksi($id_user);
+       // Cari baris ini, lalu tambahkan angka 5 sebagai limit
+        $data['riwayat'] = $this->Expense_model->get_riwayat_transaksi($id_user, 5);
 
         // 5. Tampilkan ke Layar (Load View) berurutan dari atas ke bawah
         $this->load->view('templates/header');         // Muat CSS & HTML atas

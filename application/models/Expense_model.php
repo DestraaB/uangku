@@ -36,4 +36,16 @@ class Expense_model extends CI_Model {
         
         return ($query->nominal != null) ? $query->nominal : 0;
     }
+
+    // Fungsi untuk menarik daftar riwayat transaksi
+    public function get_riwayat_transaksi($id_user) {
+        $this->db->select('expenses.*, categories.nama_kategori');
+        $this->db->from('expenses');
+        $this->db->join('categories', 'categories.id_kategori = expenses.id_kategori'); // Mengambil nama kategori
+        $this->db->where('expenses.id_user', $id_user);
+        $this->db->order_by('expenses.tanggal', 'DESC'); // Urutkan dari yang terbaru
+        $this->db->order_by('expenses.id_expense', 'DESC');
+        
+        return $this->db->get()->result(); // Mengembalikan banyak data (array of objects)
+    }
 }

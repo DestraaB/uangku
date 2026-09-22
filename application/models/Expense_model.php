@@ -73,4 +73,18 @@ class Expense_model extends CI_Model {
         $this->db->where('id_user', $id_user);
         return $this->db->count_all_results('expenses');
     }
+
+    // Mencari 1 data spesifik untuk mengetahui nama file fotonya
+    public function get_expense_by_id($id_expense, $id_user) {
+        $this->db->where('id_expense', $id_expense);
+        $this->db->where('id_user', $id_user); // Keamanan: Pastikan ini milik user yang sedang login
+        return $this->db->get('expenses')->row();
+    }
+
+    // Eksekusi hapus baris di tabel
+    public function delete_data($id_expense, $id_user) {
+        $this->db->where('id_expense', $id_expense);
+        $this->db->where('id_user', $id_user);
+        return $this->db->delete('expenses');
+    }
 }

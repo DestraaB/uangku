@@ -15,13 +15,18 @@
                 <?php endif; ?>
             </div>
             
+            
             <div class="text-end">
                 <h6 class="mb-1 text-danger fw-bold">- Rp <?= number_format($row->nominal, 0, ',', '.'); ?></h6>
                 <button type="button" class="btn btn-sm btn-outline-secondary mt-1" data-bs-toggle="modal" data-bs-target="#strukModalRiwayat<?= $row->id_expense; ?>">
                     <i class="bi bi-receipt"></i> Struk
                 </button>
             </div>
+            <a href="<?= base_url('expense/hapus/'.$row->id_expense); ?>" class="btn btn-sm btn-outline-danger mt-1" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini? Data tidak bisa dikembalikan.')">
+    <i class="bi bi-trash"></i> Hapus
+</a>
         </div>
+        
 
         <!-- Modal Pop-up Struk -->
         <div class="modal fade" id="strukModalRiwayat<?= $row->id_expense; ?>" tabindex="-1" aria-hidden="true">
@@ -42,5 +47,7 @@
         <?php if(empty($semua_riwayat)): ?>
             <div class="text-center text-muted my-4">Belum ada riwayat transaksi.</div>
         <?php endif; ?>
+
+        
     </div>
 </div>

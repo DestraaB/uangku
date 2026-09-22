@@ -83,10 +83,34 @@ class Expense extends CI_Controller {
         $this->load->view('templates/footer');
     }
 
-    public function tambah() {
-        // Memuat antarmuka form tambah pengeluaran beserta navigasinya
-        $this->load->view('templates/header');
-        $this->load->view('expense/tambah');
-        $this->load->view('templates/footer');
+        public function tambah() {
+            // Memuat antarmuka form tambah pengeluaran beserta navigasinya
+            $this->load->view('templates/header');
+            $this->load->view('expense/tambah');
+            $this->load->view('templates/footer');
+     }
+
+        public function hapus($id_expense) {
+        $id_user = $this->session->userdata('id_user');
+        
+        // 1. Tarik data transaksi berdasarkan ID
+        $transaksi = $this->Expense_model->get_expense_by_id($id_expense, $id_user);
+        
+        if ($transaksi) {
+            // 2. Hapus fisik foto struk dari folder uploads/struk/
+            $path_ke_file = './uploads/struk/' . $transaksi->foto_struk;
+            if ($transaksi->foto_struk != null && file_exists($path_ke_file)) {
+                unlink($path_ke_file); // Perintah sakti penghapus file
+            }
+            
+            // 3. Hapus datanya dari database MySQL
+            $this->Expense_model->delete_data($id_expense, $id_user);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success">Transaksi dan foto struk berhasil dihapus!</div>');
+        } else {
+            $this->session->set_flashdata('pesan', '<div class="alert alert-danger">Gagal! Data tidak ditemukan atau Anda tidak memiliki akses.</div>');
+        }
+        
+        // 4. Kembali ke halaman sebelumnya (Bisa dari Home atau dari Riwayat)
+        redirect($_SERVER['HTTP_REFERER']);
     }
 }

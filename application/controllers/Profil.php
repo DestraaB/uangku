@@ -44,8 +44,8 @@ class Profil extends CI_Controller {
         $config = [
             'protocol'  => 'smtp',
             'smtp_host' => 'ssl://smtp.googlemail.com',
-            'smtp_user' => 'email_kamu@gmail.com', // Ganti dengan Email-mu
-            'smtp_pass' => 'sandi_aplikasi_google', // BUKAN password biasa. Harus buat "App Password" di setelan Google
+            'smtp_user' => 'destrajaya11@gmail.com', // Ganti dengan Email-mu
+            'smtp_pass' => 'qbyy usgt vakj jspd', // BUKAN password biasa. Harus buat "App Password" di setelan Google
             'smtp_port' => 465,
             'mailtype'  => 'html',
             'charset'   => 'utf-8',

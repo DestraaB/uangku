@@ -11,7 +11,6 @@ class Auth extends CI_Controller {
 
     // --- HALAMAN & LOGIKA LOGIN ---
     public function login() {
-        // Cegah user yang sudah login kembali ke halaman login
         if ($this->session->userdata('id_user')) {
             redirect('home');
         }
@@ -22,23 +21,17 @@ class Auth extends CI_Controller {
         $email = $this->input->post('email', TRUE);
         $password = $this->input->post('password', TRUE);
 
-        // Cari user berdasarkan email
         $user = $this->db->get_where('users', ['email' => $email])->row();
 
-        // Cek apakah user ditemukan DAN password cocok dengan hash di database
         if ($user && password_verify($password, $user->password)) {
-            
-            // Simpan data ke session
             $data_session = [
                 'id_user' => $user->id_user,
                 'nama'    => $user->nama,
                 'email'   => $user->email
             ];
             $this->session->set_userdata($data_session);
-            redirect('home'); // Masuk ke Dashboard
-            
+            redirect('home');
         } else {
-            // Jika gagal, kembalikan dengan pesan error
             $this->session->set_flashdata('pesan', '<div class="alert alert-danger text-center">Email atau Password salah!</div>');
             redirect('auth/login');
         }
@@ -53,7 +46,6 @@ class Auth extends CI_Controller {
     }
 
     public function proses_register() {
-        // Aturan validasi (Email harus unik di tabel users)
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[users.email]', [
             'is_unique' => 'Email ini sudah pernah didaftarkan!'
@@ -61,16 +53,19 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]', [
             'min_length' => 'Password minimal 6 karakter!'
         ]);
+        
+        // BARU: Aturan validasi untuk konfirmasi password agar harus sama dengan password atasnya
+        $this->form_validation->set_rules('konfirmasi_password', 'Konfirmasi Password', 'required|matches[password]', [
+            'matches' => 'Konfirmasi password tidak sama!'
+        ]);
 
         if ($this->form_validation->run() == FALSE) {
-            // Jika validasi gagal, kembali ke form registrasi
             $this->load->view('auth/register');
         } else {
-            // Jika validasi sukses, enkripsi password dan simpan ke database
             $data = [
                 'nama'     => htmlspecialchars($this->input->post('nama', TRUE)),
                 'email'    => htmlspecialchars($this->input->post('email', TRUE)),
-                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT) // Enkripsi Hash!
+                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT)
             ];
 
             $this->db->insert('users', $data);
@@ -82,39 +77,48 @@ class Auth extends CI_Controller {
 
     // --- FUNGSI LOGOUT ---
     public function logout() {
-        // Hancurkan semua session
         $this->session->sess_destroy();
         redirect('auth/login');
     }
-    // Fungsi saat link dari email diklik
-public function reset_password() {
-    $token = $this->input->get('token');
     
-    // Cek apakah tokennya asli dan ada di database
-    $user = $this->db->get_where('users', ['reset_token' => $token])->row();
+    // --- FUNGSI RESET PASSWORD (DARI EMAIL) ---
+    public function reset_password() {
+        $token = $this->input->get('token');
+        $user = $this->db->get_where('users', ['reset_token' => $token])->row();
 
-    if ($user) {
-        $data['token'] = $token;
-        // Arahkan ke form pengisian password baru
-        $this->load->view('auth/form_reset', $data); 
-    } else {
-        echo "Token tidak valid atau sudah kadaluarsa.";
+        if ($user) {
+            $data['token'] = $token;
+            $this->load->view('auth/form_reset', $data); 
+        } else {
+            echo "Token tidak valid atau sudah kadaluarsa.";
+        }
     }
-}
 
-// Fungsi saat tombol simpan password ditekan
-public function proses_password_baru() {
-    $token = $this->input->post('token');
-    $password_baru = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+    public function proses_password_baru() {
+        $token      = $this->input->post('token');
+        $password   = $this->input->post('password');
+        
+        // BARU: Menangkap input konfirmasi password
+        $konfirmasi = $this->input->post('konfirmasi_password');
 
-    // Update password dan kosongkan kembali kolom token
-    $this->db->where('reset_token', $token);
-    $this->db->update('users', [
-        'password' => $password_baru,
-        'reset_token' => NULL 
-    ]);
+        // BARU: Cek apakah password dan konfirmasi sama
+        if ($password !== $konfirmasi) {
+            $this->session->set_flashdata('pesan', '<div class="alert alert-danger text-center">Password baru dan konfirmasi tidak cocok!</div>');
+            redirect('auth/reset_password?token=' . $token);
+            return; // Hentikan script di sini jika password beda
+        }
 
-    $this->session->set_flashdata('pesan', '<div class="alert alert-success">Password berhasil diubah! Silakan login kembali.</div>');
-    redirect('auth/login');
-}
+        // Jika cocok, lanjutkan proses enkripsi
+        $password_baru = password_hash($password, PASSWORD_DEFAULT);
+
+        $this->db->where('reset_token', $token);
+        $this->db->update('users', [
+            'password' => $password_baru,
+            'reset_token' => NULL 
+        ]);
+
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success text-center">Password berhasil diubah! Silakan login kembali.</div>');
+        redirect('auth/login');
+    }
+
 }

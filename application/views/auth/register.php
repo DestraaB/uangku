@@ -33,6 +33,10 @@
                         <label class="form-label text-muted">Password (Min. 6 Karakter)</label>
                         <input type="password" name="password" class="form-control form-control-lg" placeholder="******" required>
                     </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted">Konfirmasi Password</label>
+                        <input type="password" name="konfirmasi_password" class="form-control form-control-lg" placeholder="Ulangi kata sandi" required>
+                    </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg rounded-3">Daftar Akun</button>
                     </div>

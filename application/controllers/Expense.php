@@ -73,16 +73,19 @@ class Expense extends CI_Controller {
         }
     }
 
-        public function riwayat() {
-        // Tarik semua data tanpa limit
+public function riwayat() {
         $id_user = $this->session->userdata('id_user');
+        
+        // Tarik semua data riwayat transaksi
         $data['semua_riwayat'] = $this->Expense_model->get_riwayat_transaksi($id_user); 
+        
+        // BARU: Tarik total uang keseluruhan dari database
+        $data['total_keseluruhan'] = $this->Expense_model->get_total_lifetime($id_user);
 
         $this->load->view('templates/header');
         $this->load->view('expense/riwayat', $data);
         $this->load->view('templates/footer');
     }
-
         public function tambah() {
             // Memuat antarmuka form tambah pengeluaran beserta navigasinya
             $this->load->view('templates/header');

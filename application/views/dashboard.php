@@ -1,112 +1,56 @@
-<!-- Pastikan memuat CSS Bootstrap di head -->
-<div class="container mt-4 mb-5">
-    <h3 class="mb-4">Halo, <?= $this->session->userdata('nama'); ?> 👋</h3>
-
-    <!-- Notifikasi jika ada dari Controller Expense -->
-    <?= $this->session->flashdata('pesan'); ?>
-
-    <!-- Kartu Total Keseluruhan (Warna Utama) -->
-    <div class="card bg-primary text-white mb-4 shadow-sm">
-        <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-white-50">Total Pengeluaran (Bulan Ini)</h6>
-            <!-- Gunakan number_format untuk mengubah 50000 menjadi 50.000 -->
-            <h1 class="card-title mb-0">Rp <?= number_format($total_pengeluaran, 0, ',', '.'); ?></h1>
+<!DOCTYPE html>
+<html lang="id">
+<div class="container-fluid p-0 mb-5 pb-5">
+    <!-- Header Melengkung Biru -->
+    <div class="bg-livin header-curve pt-4 px-3 anim-1">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-25 rounded-circle d-flex justify-content-center align-items-center text-white fw-bold me-2" style="width:40px; height:40px;">
+                    <?= strtoupper(substr($this->session->userdata('nama'), 0, 1)); ?>
+                </div>
+                <div>
+                    <small class="d-block text-white-50" style="font-size:11px;">Selamat datang,</small>
+                    <span class="fw-bold text-white"><?= strtok($this->session->userdata('nama'), " "); ?></span>
+                </div>
+            </div>
+            <i class="bi bi-bell-fill fs-5 text-white"></i>
         </div>
     </div>
 
-    <h5 class="mb-3 text-muted">Rincian Kategori</h5>
-    
-    <div class="row g-3">
-        <!-- Kartu Primer (Kuning) -->
-        <div class="col-12">
-            <div class="card border-warning shadow-sm">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="text-warning fw-bold">Primer (Pokok)</span>
-                    <span class="fw-bold">Rp <?= number_format($total_primer, 0, ',', '.'); ?></span>
-                </div>
+    <!-- Kartu Saldo (Melayang) -->
+    <div class="container overlap-card anim-2">
+        <div class="card-livin p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted fw-bold small">Total Pengeluaran Bulan Ini</span>
+                <i class="bi bi-wallet2 text-livin"></i>
             </div>
-        </div>
-        
-        <!-- Kartu Sekunder (Biru Muda) -->
-        <div class="col-12">
-            <div class="card border-info shadow-sm">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="text-info fw-bold">Sekunder</span>
-                    <span class="fw-bold">Rp <?= number_format($total_sekunder, 0, ',', '.'); ?></span>
-                </div>
-            </div>
+            <h2 class="fw-bolder text-dark mb-0">Rp <?= number_format($total_pengeluaran, 0, ',', '.'); ?></h2>
+            <hr class="text-muted my-3 opacity-25">
+            <a href="<?= base_url('expense/riwayat'); ?>" class="text-decoration-none text-livin fw-bold small d-block text-center">
+                Lihat Semua Riwayat <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
 
-        <!-- Kartu Tersier (Merah) -->
-        <div class="col-12">
-            <div class="card border-danger shadow-sm">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="text-danger fw-bold">Tersier (Hiburan)</span>
-                    <span class="fw-bold">Rp <?= number_format($total_tersier, 0, ',', '.'); ?></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Tombol Tambah yang melayang atau di bawah (Floating Action Button style) -->
-    <div class="d-grid gap-2 mt-4">
-        <a href="<?= base_url('expense/tambah'); ?>" class="btn btn-success btn-lg">
-            + Tambah Pengeluaran
-        </a>
-    </div>
-
-
-    <h5 class="mt-5 mb-3 text-muted">Riwayat Transaksi Terakhir</h5>
-    
-    <div class="list-group mb-5">
-        <!-- Looping data riwayat dari Controller -->
-        <?php foreach($riwayat as $row): ?>
-        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
-            <div>
-                <h6 class="mb-1 fw-bold"><?= $row->nama_kategori; ?></h6>
-                <small class="text-muted d-block"><?= date('d M Y', strtotime($row->tanggal)); ?></small>
-                <?php if(!empty($row->deskripsi)): ?>
-                    <small class="text-secondary"><?= $row->deskripsi; ?></small>
-                <?php endif; ?>
-            </div>
-            
-            <div class="text-end">
-                <h6 class="mb-1 text-danger fw-bold">- Rp <?= number_format($row->nominal, 0, ',', '.'); ?></h6>
-                
-                <!-- Tombol untuk memicu Modal (Pop-up) Struk -->
-                <button type="button" class="btn btn-sm btn-outline-secondary mt-1" data-bs-toggle="modal" data-bs-target="#strukModal<?= $row->id_expense; ?>">
-                    <i class="bi bi-receipt"></i> Lihat Struk
-                </button>
-            </div>
-        </div>
-
-        
-
-        <!-- Modal (Pop-up) Gambar Struk untuk setiap transaksi -->
-        <div class="modal fade" id="strukModal<?= $row->id_expense; ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Struk Transaksi</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Transaksi Terbaru (Mirip Transaksi Favorit) -->
+        <h6 class="fw-bold mb-3 ms-1 text-dark anim-3">Transaksi Terakhir</h6>
+        <div class="card-livin p-3 anim-3">
+            <?php foreach($riwayat as $row): ?>
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-initial me-3">
+                        <?= strtoupper(substr($row->nama_kategori, 0, 2)); ?>
                     </div>
-                    <div class="modal-body text-center">
-                        <img src="<?= base_url('uploads/struk/'.$row->foto_struk); ?>" class="img-fluid rounded shadow-sm" alt="Foto Struk">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark" style="font-size:14px;"><?= $row->nama_kategori; ?></h6>
+                        <small class="text-muted" style="font-size:11px;"><?= date('d M Y', strtotime($row->tanggal)); ?> &bull; <?= $row->deskripsi; ?></small>
                     </div>
                 </div>
+                <div class="text-end">
+                    <span class="fw-bold text-danger d-block" style="font-size:14px;">- Rp <?= number_format($row->nominal, 0, ',', '.'); ?></span>
+                </div>
             </div>
+            <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
-        
-        <?php if(empty($riwayat)): ?>
-            <div class="text-center text-muted my-4">Belum ada transaksi dicatat.</div>
-        <?php endif; ?>
-
-        <!-- Tambahkan tombol ini di bawah daftar list-group riwayat pada dashboard.php -->
-    <div class="text-center mt-3">
-        <a href="<?= base_url('expense/riwayat'); ?>" class="text-decoration-none fw-bold">
-            Lihat Semua Riwayat 
-        </a>
-    </div>
     </div>
 </div>
+</html>

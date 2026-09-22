@@ -1,28 +1,250 @@
-<!-- BOTTOM NAVIGATION BAR -->
-<nav class="navbar fixed-bottom bg-white border-top shadow-sm d-flex justify-content-around py-2">
-    <!-- Tombol Home -->
-    <a href="<?= base_url('home'); ?>" class="text-decoration-none text-center <?= ($this->uri->segment(1) == 'home' || $this->uri->segment(1) == '') ? 'text-primary' : 'text-muted'; ?>">
-        <i class="bi bi-house-door-fill fs-4"></i>
-        <div style="font-size: 12px; margin-top: -5px;">Home</div>
-    </a>
+<!-- =====================================================
+     NAVIGASI BAWAH
+====================================================== -->
+<nav class="bottom-nav">
 
-    <!-- Tombol Tambah (Di Tengah & Sedikit Lebih Besar) -->
-    <a href="<?= base_url('expense/tambah'); ?>" class="text-decoration-none text-center">
-        <!-- Icon Plus dilapisi lingkaran warna biru -->
-        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 45px; height: 45px; margin-top: -15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-            <i class="bi bi-plus-lg fs-4"></i>
-        </div>
-        <div class="text-primary fw-bold" style="font-size: 12px;">Catat</div>
-    </a>
+    <div class="bottom-nav-inner">
 
-    <!-- Tombol Profil / Riwayat -->
-    <a href="<?= base_url('profil'); ?>" class="text-decoration-none text-center <?= ($this->uri->segment(1) == 'profil') ? 'text-primary' : 'text-muted'; ?>">
-        <i class="bi bi-person-fill fs-4"></i>
-        <div style="font-size: 12px; margin-top: -5px;">Profil</div>
-    </a>
+        <!-- BERANDA -->
+        <a href="<?= base_url('home'); ?>"
+           class="bottom-nav-item <?= ($this->uri->segment(1) == 'home') ? 'active' : ''; ?>">
+
+            <i class="bi <?= ($this->uri->segment(1) == 'home')
+                ? 'bi-house-door-fill'
+                : 'bi-house-door'; ?>"></i>
+
+            <span>Beranda</span>
+        </a>
+
+
+        <!-- RIWAYAT -->
+        <a href="<?= base_url('expense/riwayat'); ?>"
+           class="bottom-nav-item <?= ($this->uri->segment(2) == 'riwayat') ? 'active' : ''; ?>">
+
+            <i class="bi <?= ($this->uri->segment(2) == 'riwayat')
+                ? 'bi-clock-history'
+                : 'bi-clock'; ?>"></i>
+
+            <span>Riwayat</span>
+        </a>
+
+
+        <!-- TOMBOL CATAT -->
+        <a href="<?= base_url('expense/tambah'); ?>"
+           class="bottom-nav-item bottom-nav-add">
+
+            <div class="add-button">
+                <i class="bi bi-upc-scan"></i>
+            </div>
+
+            <span>Catat</span>
+        </a>
+
+
+        <!-- PROFIL -->
+        <a href="<?= base_url('profil'); ?>"
+           class="bottom-nav-item <?= ($this->uri->segment(1) == 'profil') ? 'active' : ''; ?>">
+
+            <i class="bi <?= ($this->uri->segment(1) == 'profil')
+                ? 'bi-person-fill'
+                : 'bi-person'; ?>"></i>
+
+            <span>Profil</span>
+        </a>
+
+    </div>
+
 </nav>
 
-<!-- Script Bootstrap -->
+
+<!-- =====================================================
+     BOOTSTRAP JS
+====================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
+<style>
+/* =====================================================
+   FOOTER / BOTTOM NAVIGATION FIXED
+===================================================== */
+
+.bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100%;
+    height: 86px;
+    background: #ffffff;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.10);
+    z-index: 99999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Container isi */
+
+.bottom-nav-inner {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    padding: 0 25px;
+}
+
+
+/* Item */
+
+.bottom-nav-item {
+    position: relative;
+
+    width: 25%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    color: #777;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+}
+
+
+/* Icon */
+
+.bottom-nav-item i {
+    font-size: 25px;
+
+    margin-bottom: 5px;
+
+    line-height: 1;
+}
+
+
+/* Text */
+
+.bottom-nav-item span {
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* Active */
+
+.bottom-nav-item.active {
+    color: #0068a8;
+}
+
+
+/* =====================================================
+   TOMBOL CATAT
+====================================================== */
+
+.bottom-nav-add {
+    justify-content: flex-end;
+
+    padding-bottom: 12px;
+
+    color: #0068a8;
+}
+
+
+/* Lingkaran */
+
+.add-button {
+    position: absolute;
+
+    top: -30px;
+
+    width: 64px;
+    height: 64px;
+
+    border-radius: 50%;
+
+    background: #0068a8;
+
+    border: 5px solid #f4f6f9;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        0 5px 15px rgba(0, 94, 157, 0.30);
+}
+
+
+/* Icon Catat */
+
+.add-button i {
+    color: #ffffff;
+
+    font-size: 28px;
+
+    margin: 0;
+}
+
+
+/* Hover */
+
+.bottom-nav-item:hover {
+    color: #0068a8;
+}
+
+
+/* =====================================================
+   BODY
+====================================================== */
+
+body {
+    padding-bottom: 95px;
+}
+
+
+/* =====================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 576px) {
+
+    .bottom-nav {
+        height: 78px;
+    }
+
+    .bottom-nav-inner {
+        padding: 0 10px;
+    }
+
+    .bottom-nav-item i {
+        font-size: 22px;
+    }
+
+    .bottom-nav-item span {
+        font-size: 10px;
+    }
+
+    .add-button {
+        width: 60px;
+        height: 60px;
+
+        top: -27px;
+    }
+
+}
+
+</style>
 </html>

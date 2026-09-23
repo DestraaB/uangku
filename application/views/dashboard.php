@@ -13,7 +13,6 @@
                     <span class="fw-bold text-white"><?= strtok($this->session->userdata('nama'), " "); ?></span>
                 </div>
             </div>
-            <i class="bi bi-bell-fill fs-5 text-white"></i>
         </div>
     </div>
 

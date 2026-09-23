@@ -68,6 +68,15 @@
         [data-theme="dark"] .bg-livin { background-color: #0b192c !important; }
         [data-theme="dark"] .avatar-initial { background-color: #3a3b3c !important; color: #e4e6eb !important; }
         [data-theme="dark"] .input-livin { background-color: #3a3b3c !important; border-color: #555 !important; color: #fff !important; }
+        [data-theme="dark"] .bg-white, 
+        [data-theme="dark"] .card-livin, 
+        [data-theme="dark"] .bottom-nav,
+        [data-theme="dark"] .modal-content,
+        [data-theme="dark"] .auth-card,
+        [data-theme="dark"] .list-group-item { 
+            background-color: #242526 !important; 
+            border-color: #3a3b3c !important; 
+        }
 
         /* =====================================================
            SWITCH TEMA ANIMASI LUCU & MEMANTUL (BOUNCY)

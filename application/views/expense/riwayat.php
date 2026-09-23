@@ -51,7 +51,7 @@
             <a href="<?= base_url('home'); ?>" class="text-white text-decoration-none">
                 <i class="bi bi-arrow-left fs-4"></i>
             </a>
-            <h5 class="mb-0 fw-bold">Riwayat Transaksi</h5>
+            <h5 class="mb-0 fw-bold">Riwayat</h5>
             <div style="width: 24px;"></div>
         </div>
 

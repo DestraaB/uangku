@@ -94,6 +94,80 @@ class Auth extends CI_Controller {
         }
     }
 
+    public function lupa_password()
+    {
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Lupa Password - Uangku';
+            $this->load->view('templates/header', $data);
+            $this->load->view('auth/lupa_password');
+        } else {
+            $email = $this->input->post('email');
+            $user = $this->db->get_where('users', ['email' => $email])->row_array();
+
+            if ($user) {
+                // Buat token acak dan simpan ke database
+                $token = base64_encode(random_bytes(32));
+                
+                $this->db->set('reset_token', $token);
+                $this->db->where('email', $email);
+                $this->db->update('users');
+
+                // Siapkan Link Reset
+                $reset_link = base_url('auth/reset_password?token=' . urlencode($token));
+
+                // ==========================================
+                // KONFIGURASI SMTP GMAIL CODEIGNITER 3
+                // ==========================================
+                $config = [
+                    'protocol'  => 'smtp',
+                    'smtp_host' => 'ssl://smtp.googlemail.com',
+                    'smtp_user' => 'destrajaya11@gmail.com',     // GANTI: Masukkan email Gmail-mu
+                    'smtp_pass' => 'qbyy usgt vakj jspd',   // GANTI: Masukkan App Password (Sandi Aplikasi)
+                    'smtp_port' => 465,
+                    'mailtype'  => 'html',
+                    'charset'   => 'utf-8',
+                    'newline'   => "\r\n"
+                ];
+
+                $this->load->library('email', $config);
+                $this->email->initialize($config);
+
+                $this->email->from('destrajaya11@gmail.com', 'Admin Uangku'); // Ganti emailmu
+                $this->email->to($email);
+                $this->email->subject('Reset Password - Aplikasi Uangku');
+                
+                // Desain isi email sederhana
+                $pesan_email = "
+                    <h3>Halo, {$user['nama']}</h3>
+                    <p>Kami menerima permintaan untuk mereset password akun Uangku milik Anda.</p>
+                    <p>Silakan klik link di bawah ini untuk membuat password baru:</p>
+                    <a href='{$reset_link}' style='padding: 10px 15px; background-color: #005E9D; color: white; text-decoration: none; border-radius: 5px; display: inline-block;'>Reset Password</a>
+                    <br><br>
+                    <p>Jika Anda tidak pernah meminta reset password, abaikan email ini.</p>
+                ";
+                
+                $this->email->message($pesan_email);
+
+             // Eksekusi pengiriman email
+                if ($this->email->send()) {
+                    $this->session->set_flashdata('pesan', '<div class="alert alert-success text-center">Instruksi pemulihan telah dikirim ke email Anda! Cek folder Inbox atau Spam.</div>');
+                } else {
+                    // Tampilkan error asli dari Google di layar
+                    echo $this->email->print_debugger(); 
+                    die;
+                }
+                
+                redirect('auth/lupa_password');
+
+            } else {
+                $this->session->set_flashdata('pesan', '<div class="alert alert-danger text-center">Email tidak terdaftar di sistem kami!</div>');
+                redirect('auth/lupa_password');
+            }
+        }
+    }
+
     public function proses_password_baru() {
         $token      = $this->input->post('token');
         $password   = $this->input->post('password');

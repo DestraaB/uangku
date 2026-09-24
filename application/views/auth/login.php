@@ -70,8 +70,7 @@
                 
                 <div class="mt-4">
                     <a href="<?= base_url('auth/register'); ?>" class="text-decoration-none text-muted small fw-bold d-block mb-2">Belum punya akun? <span class="text-livin">Daftar Sekarang</span></a>
-                    <a href="<?= base_url('profil/pengaturan'); ?>" class="text-decoration-none text-muted small">Lupa Password?</a>
-                </div>
+                    <a href="<?= base_url('auth/lupa_password'); ?>" class="text-decoration-none text-muted small">Lupa Password?</a>
             </div>
 
         </div>

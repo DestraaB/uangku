@@ -95,6 +95,19 @@ body {
     .bottom-nav-item span { font-size: 10px; }
     .add-button { width: 60px; height: 60px; top: -27px; }
 }
+
+/* =====================================================
+     TAMBAHAN DARK MODE FOOTER & MODAL POP-UP
+====================================================== */
+[data-theme="dark"] .bottom-nav { background: #1e1e1e !important; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+[data-theme="dark"] .add-button { border-color: #121212 !important; }
+[data-theme="dark"] .modal-content { background-color: #242526 !important; border-color: #3a3b3c !important; }
+[data-theme="dark"] .modal-title, [data-theme="dark"] h6 { color: #e4e6eb !important; }
+[data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+[data-theme="dark"] .modal-card-in { background-color: #163323 !important; }
+[data-theme="dark"] .modal-card-out { background-color: #3a1c1c !important; }
+[data-theme="dark"] .bottom-nav-item.active, [data-theme="dark"] .bottom-nav-item:hover { color: #87CEEB !important; }
+[data-theme="dark"] .bottom-nav-item { color: #8d979f; }
 </style>
 
 <!-- =====================================================
@@ -108,14 +121,14 @@ body {
             <span>Beranda</span>
         </a>
 
-        <!-- RIWAYAT -->
+        <!-- RIWAYAT (Bisa untuk Pemasukan & Pengeluaran nanti) -->
         <a href="<?= base_url('expense/riwayat'); ?>" class="bottom-nav-item <?= ($this->uri->segment(2) == 'riwayat') ? 'active' : ''; ?>">
             <i class="bi <?= ($this->uri->segment(2) == 'riwayat') ? 'bi-clock-history' : 'bi-clock'; ?>"></i>
             <span>Riwayat</span>
         </a>
 
-        <!-- TOMBOL CATAT -->
-        <a href="<?= base_url('expense/tambah'); ?>" class="bottom-nav-item bottom-nav-add">
+        <!-- TOMBOL CATAT (Memanggil Modal) -->
+        <a href="#" class="bottom-nav-item bottom-nav-add" data-bs-toggle="modal" data-bs-target="#modalPilihTransaksi">
             <div class="add-button">
                 <i class="bi bi-upc-scan"></i>
             </div>
@@ -129,6 +142,46 @@ body {
         </a>
     </div>
 </nav>
+
+<!-- =====================================================
+     MODAL PILIH TRANSAKSI (Muncul saat tombol QR diklik)
+====================================================== -->
+<div class="modal fade" id="modalPilihTransaksi" tabindex="-1" aria-labelledby="modalTransaksiLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content shadow" style="border-radius: 20px;">
+      <div class="modal-header border-0 pb-0">
+        <h6 class="modal-title fw-bold" id="modalTransaksiLabel">Buat Catatan Baru</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center pb-4">
+        <div class="row g-3 mt-1">
+            <!-- Pilihan Pemasukan -->
+            <div class="col-6">
+                <a href="<?= base_url('pemasukan'); ?>" class="text-decoration-none">
+                    <div class="card modal-card-in shadow-sm border-0 h-100" style="border-radius:15px; background: #eaf6fc;">
+                        <div class="card-body py-4">
+                            <i class="bi bi-arrow-down-circle-fill text-success" style="font-size: 2rem;"></i>
+                            <h6 class="mt-2 mb-0 fw-bold text-dark" style="font-size: 13px;">Uang Masuk</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- Pilihan Pengeluaran (Disesuaikan dengan route lamamu) -->
+            <div class="col-6">
+                <a href="<?= base_url('expense/tambah'); ?>" class="text-decoration-none">
+                    <div class="card modal-card-out shadow-sm border-0 h-100" style="border-radius:15px; background: #fceaea;">
+                        <div class="card-body py-4">
+                            <i class="bi bi-arrow-up-circle-fill text-danger" style="font-size: 2rem;"></i>
+                            <h6 class="mt-2 mb-0 fw-bold text-dark" style="font-size: 13px;">Pengeluaran</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- =====================================================
      JAVASCRIPT BOOTSTRAP & BUG FIX

@@ -80,8 +80,10 @@
                                 <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">
                                     <?= $row->nama_kategori; ?>
                                 </h6>
+                                <!-- Modifikasi: Menambahkan Catatan/Deskripsi di sebelah tanggal -->
                                 <small class="text-muted" style="font-size: 11px;">
-                                    <?= date('d M Y', strtotime($row->tanggal)); ?>
+                                    <?= date('d M Y', strtotime($row->tanggal)); ?> 
+                                    <?= !empty($row->deskripsi) ? '&bull; ' . $row->deskripsi : ''; ?>
                                 </small>
                             </div>
                         </div>

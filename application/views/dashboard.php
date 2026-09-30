@@ -39,7 +39,7 @@
             </div>
 
             <hr class="text-muted my-3 opacity-25">
-            <a href="<?= base_url('riwayat'); ?>" class="text-decoration-none text-livin fw-bold small d-block text-center">
+            <a href="<?= base_url('expense/riwayat'); ?>" class="text-decoration-none text-livin fw-bold small d-block text-center">
                 Lihat Semua Riwayat <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -106,4 +106,13 @@
         </div>
     </div>
 </div>
+<!-- SAKLAR TEMA SEGMENTED (DI TENGAH BAWAH) -->
+        <div class="d-flex justify-content-center align-items-center mt-5 mb-4 anim-3">
+            <label class="segmented-theme-switch">
+                <input type="checkbox" class="theme-toggle-checkbox" />
+                <span class="segment-text text-light"><i class="bi bi-sun-fill me-2"></i>Terang</span>
+                <span class="segment-text text-dark"><i class="bi bi-moon-stars-fill me-2"></i>Gelap</span>
+                <div class="segment-knob"></div>
+            </label>
+        </div>
 </html>

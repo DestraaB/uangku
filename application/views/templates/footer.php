@@ -23,13 +23,21 @@
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Menjaga QR tetap di tengah */
+    padding: 0 5px;
+}
+
+/* Group Menu Kiri dan Kanan */
+.nav-group {
+    display: flex;
+    flex: 1;
+    height: 100%;
     justify-content: space-around;
-    padding: 0 25px;
 }
 
 .bottom-nav-item {
     position: relative;
-    width: 25%;
+    flex: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -43,14 +51,15 @@
 }
 
 .bottom-nav-item i {
-    font-size: 25px;
-    margin-bottom: 5px;
+    font-size: 24px;
+    margin-bottom: 4px;
     line-height: 1;
 }
 
 .bottom-nav-item span {
     font-size: 11px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .bottom-nav-item.active, .bottom-nav-item:hover {
@@ -58,6 +67,8 @@
 }
 
 .bottom-nav-add {
+    flex: 0 0 70px; /* Ukuran statis agar logo QR persis di tengah */
+    max-width: 70px;
     justify-content: flex-end;
     padding-bottom: 12px;
     color: #0068a8;
@@ -90,9 +101,9 @@ body {
 
 @media (max-width: 576px) {
     .bottom-nav { height: 78px; }
-    .bottom-nav-inner { padding: 0 10px; }
-    .bottom-nav-item i { font-size: 22px; }
-    .bottom-nav-item span { font-size: 10px; }
+    .bottom-nav-inner { padding: 0; }
+    .bottom-nav-item i { font-size: 21px; }
+    .bottom-nav-item span { font-size: 9.5px; }
     .add-button { width: 60px; height: 60px; top: -27px; }
 }
 
@@ -115,19 +126,25 @@ body {
 ====================================================== -->
 <nav class="bottom-nav">
     <div class="bottom-nav-inner">
-        <!-- BERANDA -->
-        <a href="<?= base_url('home'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'home') ? 'active' : ''; ?>">
-            <i class="bi <?= ($this->uri->segment(1) == 'home') ? 'bi-house-door-fill' : 'bi-house-door'; ?>"></i>
-            <span>Beranda</span>
-        </a>
+        
+        <!-- BLOK KIRI (3 Menu) -->
+        <div class="nav-group">
+            <a href="<?= base_url('home'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'home') ? 'active' : ''; ?>">
+                <i class="bi <?= ($this->uri->segment(1) == 'home') ? 'bi-house-door-fill' : 'bi-house-door'; ?>"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="<?= base_url('expense/riwayat'); ?>" class="bottom-nav-item <?= ($this->uri->segment(2) == 'riwayat') ? 'active' : ''; ?>">
+                <i class="bi <?= ($this->uri->segment(2) == 'riwayat') ? 'bi-clock-history' : 'bi-clock'; ?>"></i>
+                <span>Riwayat</span>
+            </a>
+            <!-- Tambahan: TABUNGAN -->
+            <a href="<?= base_url('tabungan'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'tabungan') ? 'active' : ''; ?>">
+                <i class="bi <?= ($this->uri->segment(1) == 'tabungan') ? 'bi-piggy-bank-fill' : 'bi-piggy-bank'; ?>"></i>
+                <span>Tabungan</span>
+            </a>
+        </div>
 
-        <!-- RIWAYAT (Bisa untuk Pemasukan & Pengeluaran nanti) -->
-        <a href="<?= base_url('expense/riwayat'); ?>" class="bottom-nav-item <?= ($this->uri->segment(2) == 'riwayat') ? 'active' : ''; ?>">
-            <i class="bi <?= ($this->uri->segment(2) == 'riwayat') ? 'bi-clock-history' : 'bi-clock'; ?>"></i>
-            <span>Riwayat</span>
-        </a>
-
-        <!-- TOMBOL CATAT (Memanggil Modal) -->
+        <!-- BLOK TENGAH (QR) - Terkunci 100% di Center -->
         <a href="#" class="bottom-nav-item bottom-nav-add" data-bs-toggle="modal" data-bs-target="#modalPilihTransaksi">
             <div class="add-button">
                 <i class="bi bi-upc-scan"></i>
@@ -135,11 +152,19 @@ body {
             <span>Catat</span>
         </a>
 
-        <!-- PROFIL -->
-        <a href="<?= base_url('profil'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'profil') ? 'active' : ''; ?>">
-            <i class="bi <?= ($this->uri->segment(1) == 'profil') ? 'bi-person-fill' : 'bi-person'; ?>"></i>
-            <span>Profil</span>
-        </a>
+        <!-- BLOK KANAN (2 Menu) -->
+        <div class="nav-group">
+            <!-- Tambahan: LIMIT -->
+            <a href="<?= base_url('limit'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'limit') ? 'active' : ''; ?>">
+                <i class="bi <?= ($this->uri->segment(1) == 'limit') ? 'bi-speedometer2' : 'bi-speedometer'; ?>"></i>
+                <span>Limit</span>
+            </a>
+            <a href="<?= base_url('profil'); ?>" class="bottom-nav-item <?= ($this->uri->segment(1) == 'profil') ? 'active' : ''; ?>">
+                <i class="bi <?= ($this->uri->segment(1) == 'profil') ? 'bi-person-fill' : 'bi-person'; ?>"></i>
+                <span>Profil</span>
+            </a>
+        </div>
+
     </div>
 </nav>
 

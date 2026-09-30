@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <script>
-        const savedTheme = localStorage.getItem('theme') || localStorage.getItem('darkMode') || localStorage.getItem('mode');
-        if (savedTheme === 'dark' || savedTheme === 'true') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        // Membaca status saklar terbaru dari sistem
+        const savedTheme = localStorage.getItem('uangku_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
 
     <style>

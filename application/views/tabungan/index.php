@@ -8,10 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     <script>
-        const savedTheme = localStorage.getItem('theme') || localStorage.getItem('darkMode') || localStorage.getItem('mode');
-        if (savedTheme === 'dark' || savedTheme === 'true') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        const savedTheme = localStorage.getItem('uangku_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
 
     <style>
@@ -33,18 +31,20 @@
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="bg-livin-header">
+    <!-- Header dengan Animasi Pertama -->
+    <div class="bg-livin-header anim-1">
         <h5 class="fw-bold mb-0 text-white"><i class="bi bi-piggy-bank me-2"></i> Tabungan & Limit</h5>
         <small class="text-white-50">Kelola target menabung dan batasan pengeluaran bulananmu.</small>
     </div>
 
     <div class="container px-3 overlap-card">
         
-        <?= $this->session->flashdata('pesan'); ?>
+        <div class="anim-2">
+            <?= $this->session->flashdata('pesan'); ?>
+        </div>
 
-        <!-- KARTU INFORMASI UTAMA -->
-        <div class="row g-3 mb-4">
+        <!-- KARTU INFORMASI UTAMA dengan Animasi Kedua -->
+        <div class="row g-3 mb-4 anim-2">
             <div class="col-6">
                 <div class="card-livin p-3 h-100 text-center">
                     <span class="text-muted small fw-bold">Total Tabungan</span>
@@ -59,20 +59,8 @@
             </div>
         </div>
 
-        <!-- FORM 1: ATUR LIMIT PENGELUARAN -->
-        <div class="card-livin p-4 mb-4">
-            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-sliders text-primary me-2"></i> Atur Limit Pengeluaran Bulanan</h6>
-            <form action="<?= base_url('tabungan/update_limit'); ?>" method="POST">
-                <div class="mb-3">
-                    <label class="form-label text-muted small fw-bold">Nominal Limit (Rp)</label>
-                    <input type="number" name="limit_pengeluaran" class="form-control input-livin" value="<?= $user['limit_pengeluaran']; ?>" min="0" required placeholder="Contoh: 2000000">
-                </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-pill" style="background-color: #005E9D; border:none;">Simpan Limit Baru</button>
-            </form>
-        </div>
-
-        <!-- FORM 2: TAMBAH SETORAN TABUNGAN -->
-        <div class="card-livin p-4 mb-4">
+        <!-- FORM TAMBAH SETORAN dengan Animasi Ketiga -->
+        <div class="card-livin p-4 mb-4 anim-3">
             <h6 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle-fill text-success me-2"></i> Setor / Tambah Tabungan</h6>
             <form action="<?= base_url('tabungan/simpan_tabungan'); ?>" method="POST">
                 <div class="mb-3">
@@ -91,22 +79,24 @@
             </form>
         </div>
 
-        <!-- RIWAYAT TABUNGAN -->
-        <h6 class="fw-bold mb-3 ms-1 text-dark">Riwayat Setoran Tabungan</h6>
-        <div class="card-livin p-3">
-            <?php if(!empty($tabungan)): ?>
-                <?php foreach($tabungan as $row): ?>
-                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                    <div>
-                        <h6 class="mb-0 fw-bold text-dark" style="font-size:14px;"><?= !empty($row->deskripsi) ? $row->deskripsi : 'Tabungan Rutin'; ?></h6>
-                        <small class="text-muted" style="font-size:11px;"><?= date('d M Y', strtotime($row->tanggal)); ?></small>
+        <!-- RIWAYAT TABUNGAN dengan Animasi Ketiga -->
+        <div class="anim-3">
+            <h6 class="fw-bold mb-3 ms-1 text-dark">Riwayat Setoran Tabungan</h6>
+            <div class="card-livin p-3">
+                <?php if(!empty($tabungan)): ?>
+                    <?php foreach($tabungan as $row): ?>
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark" style="font-size:14px;"><?= !empty($row->deskripsi) ? $row->deskripsi : 'Tabungan Rutin'; ?></h6>
+                            <small class="text-muted" style="font-size:11px;"><?= date('d M Y', strtotime($row->tanggal)); ?></small>
+                        </div>
+                        <span class="fw-bold text-success" style="font-size:14px;">+ Rp <?= number_format($row->nominal, 0, ',', '.'); ?></span>
                     </div>
-                    <span class="fw-bold text-success" style="font-size:14px;">+ Rp <?= number_format($row->nominal, 0, ',', '.'); ?></span>
-                </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-center text-muted small mb-0 py-3">Belum ada riwayat tabungan.</p>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-center text-muted small mb-0 py-3">Belum ada riwayat tabungan.</p>
+                <?php endif; ?>
+            </div>
         </div>
 
     </div>

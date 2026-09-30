@@ -10,10 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        const savedTheme = localStorage.getItem('theme') || localStorage.getItem('darkMode') || localStorage.getItem('mode');
-        if (savedTheme === 'dark' || savedTheme === 'true') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        // Update: menggunakan uangku_theme agar sinkron dengan saklar global
+        const savedTheme = localStorage.getItem('uangku_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
 
     <style>
@@ -35,18 +34,20 @@
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="bg-livin-header">
+    <!-- Header dengan Animasi Pertama -->
+    <div class="bg-livin-header anim-1">
         <h5 class="fw-bold mb-0 text-white"><i class="bi bi-speedometer2 me-2"></i> Limit & Statistik Anggaran</h5>
         <small class="text-white-50">Monitor batas pengeluaran dan sisa duit bulananmu.</small>
     </div>
 
     <div class="container px-3 overlap-card">
         
-        <?= $this->session->flashdata('pesan'); ?>
+        <div class="anim-2">
+            <?= $this->session->flashdata('pesan'); ?>
+        </div>
 
-        <!-- KARTU STATISTIK & DIAGRAM BULAT -->
-        <div class="card-livin p-4 mb-4 text-center">
+        <!-- KARTU STATISTIK & DIAGRAM BULAT dengan Animasi Kedua -->
+        <div class="card-livin p-4 mb-4 text-center anim-2">
             <h6 class="fw-bold text-dark mb-3">Diagram Pengeluaran Bulan Ini</h6>
             
             <!-- Elemen Kanvas Chart.js -->
@@ -70,27 +71,29 @@
             </div>
         </div>
 
-        <!-- REDZONE WARNING ALERT -->
-        <?php if($persentase >= 90): ?>
-        <div class="alert alert-danger border-0 shadow-sm rounded-4 d-flex align-items-center mb-4 p-3 animate-pulse" role="alert" style="background-color: #fceaea; color: #dc3545;">
-            <i class="bi bi-exclamation-octagon-fill fs-3 me-3"></i>
-            <div>
-                <h6 class="fw-bold mb-0" style="font-size: 13px;">REDZONE KRITIS!</h6>
-                <span class="small" style="font-size: 11px;">Pengeluaranmu sudah sangat mepet atau melampaui batas limit! Segera kurangi pengeluaran.</span>
+        <!-- REDZONE WARNING ALERT (Dibungkus Animasi Ketiga) -->
+        <div class="anim-3">
+            <?php if($persentase >= 90): ?>
+            <div class="alert alert-danger border-0 shadow-sm rounded-4 d-flex align-items-center mb-4 p-3 animate-pulse" role="alert" style="background-color: #fceaea; color: #dc3545;">
+                <i class="bi bi-exclamation-octagon-fill fs-3 me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-0" style="font-size: 13px;">REDZONE KRITIS!</h6>
+                    <span class="small" style="font-size: 11px;">Pengeluaranmu sudah sangat mepet atau melampaui batas limit! Segera kurangi pengeluaran.</span>
+                </div>
             </div>
-        </div>
-        <?php elseif($persentase >= 80): ?>
-        <div class="alert alert-warning border-0 shadow-sm rounded-4 d-flex align-items-center mb-4 p-3" role="alert" style="background-color: #fff4e5; color: #d97706;">
-            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
-            <div>
-                <h6 class="fw-bold mb-0" style="font-size: 13px;">ZONA WASPADA (MEPET LIMIT)!</h6>
-                <span class="small" style="font-size: 11px;">Pengeluaranmu sudah mencapai lebih dari 80% dari total limit. Hati-hati boros!</span>
+            <?php elseif($persentase >= 80): ?>
+            <div class="alert alert-warning border-0 shadow-sm rounded-4 d-flex align-items-center mb-4 p-3" role="alert" style="background-color: #fff4e5; color: #d97706;">
+                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-0" style="font-size: 13px;">ZONA WASPADA (MEPET LIMIT)!</h6>
+                    <span class="small" style="font-size: 11px;">Pengeluaranmu sudah mencapai lebih dari 80% dari total limit. Hati-hati boros!</span>
+                </div>
             </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
 
-        <!-- FORM ATUR LIMIT PENGELUARAN -->
-        <div class="card-livin p-4 mb-4">
+        <!-- FORM ATUR LIMIT PENGELUARAN dengan Animasi Ketiga -->
+        <div class="card-livin p-4 mb-4 anim-3">
             <h6 class="fw-bold text-dark mb-3"><i class="bi bi-sliders text-primary me-2"></i> Perbarui Limit Pengeluaran</h6>
             <form action="<?= base_url('limit/update'); ?>" method="POST">
                 <div class="mb-3">

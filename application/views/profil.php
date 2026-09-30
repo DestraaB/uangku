@@ -45,8 +45,18 @@
                     <i class="bi bi-box-arrow-right text-danger me-3 fs-5"></i>
                     <span class="fw-bold text-danger">Keluar (Logout)</span>
                 </a>
+                
             </div>
         </div>
     </div>
 </div>
+<!-- SAKLAR TEMA SEGMENTED (DI TENGAH BAWAH) -->
+        <div class="d-flex justify-content-center align-items-center mt-5 mb-4 anim-3">
+            <label class="segmented-theme-switch">
+                <input type="checkbox" class="theme-toggle-checkbox" />
+                <span class="segment-text text-light"><i class="bi bi-sun-fill me-2"></i>Terang</span>
+                <span class="segment-text text-dark"><i class="bi bi-moon-stars-fill me-2"></i>Gelap</span>
+                <div class="segment-knob"></div>
+            </label>
+        </div>
 </html>

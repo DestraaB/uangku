@@ -116,41 +116,106 @@
         /* Animasi Ikon menghilang/muncul */
         input:checked + .slider .sun { opacity: 0; transform: translateY(15px) scale(0.5); }
         input:not(:checked) + .slider .moon { opacity: 0; transform: translateY(-15px) scale(0.5); }
+       /* =====================================================
+           DESAIN SWITCH SEGMENTED (ALA GAMBAR REFERENSI)
+        ====================================================== */
+        .segmented-theme-switch {
+            position: relative;
+            display: flex;
+            width: 260px; /* Lebar tombol menyesuaikan gambar */
+            height: 48px;
+            background-color: #E9ECEF;
+            border-radius: 50px;
+            margin: 0 auto;
+            padding: 4px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+        .segmented-theme-switch input {
+            display: none;
+        }
+        .segment-knob {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background-color: #ffffff;
+            border-radius: 40px;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1;
+        }
+        .segment-text {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #8d979f;
+            z-index: 2;
+            transition: color 0.3s;
+        }
+        
+        /* Kondisi Terang (Kiri Aktif) */
+        .segmented-theme-switch input:not(:checked) ~ .segment-knob {
+            transform: translateX(0);
+        }
+        .segmented-theme-switch input:not(:checked) ~ .text-light {
+            color: #005E9D; /* Warna teks biru livin saat aktif */
+        }
+        
+        /* Kondisi Gelap (Kanan Aktif) */
+        .segmented-theme-switch input:checked ~ .segment-knob {
+            transform: translateX(100%);
+        }
+        .segmented-theme-switch input:checked ~ .text-dark {
+            color: #87CEEB; /* Warna teks biru terang saat aktif */
+        }
+
+        /* Penyesuaian Warna saat Dark Mode Aktif */
+        [data-theme="dark"] .segmented-theme-switch { 
+            background-color: #121212; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+            border: 1px solid #3a3b3c;
+        }
+        [data-theme="dark"] .segment-knob { 
+            background-color: #242526; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
-    
-    <!-- Elemen Tombol Mengambang (Langsung dirender setelah body terbuka) -->
-    <div class="floating-theme-switch anim-1">
-        <label class="theme-switch" for="checkbox-theme">
-            <input type="checkbox" id="checkbox-theme" />
-            <div class="slider">
-                <i class="bi bi-moon-stars-fill moon"></i>
-                <i class="bi bi-sun-fill sun"></i>
-            </div>
-        </label>
-    </div>
 
-    <!-- Script Pemicu Switch -->
+    <!-- SCRIPT PEMICU GLOBAL (BUG FIX) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const themeToggle = document.getElementById('checkbox-theme');
-            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const themeToggles = document.querySelectorAll('.theme-toggle-checkbox');
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             
-            // Cocokkan status tombol dengan memori tema saat halaman pertama dimuat
-            if (currentTheme === 'dark') {
-                themeToggle.checked = true;
-            }
-
-            // Ganti tema secara live saat tombol digeser
-            themeToggle.addEventListener('change', function(e) {
-                if (e.target.checked) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('uangku_theme', 'dark');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    localStorage.setItem('uangku_theme', 'light');
-                }
+            themeToggles.forEach(toggle => {
+                // Atur posisi kotak putih/hitam sesuai tema yang tersimpan
+                toggle.checked = (currentTheme === 'dark');
+                
+                // Eksekusi fungsi ubah tema saat tombol ditekan
+                toggle.addEventListener('change', function(e) {
+                    const isDark = e.target.checked;
+                    const newTheme = isDark ? 'dark' : 'light';
+                    
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('uangku_theme', newTheme);
+                    
+                    // Sinkronkan semua tombol jika ada lebih dari 1
+                    themeToggles.forEach(t => {
+                        if (t !== e.target) t.checked = isDark;
+                    });
+                });
             });
         });
     </script>
+</head>
+<body>
+    
+

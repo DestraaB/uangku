@@ -7,7 +7,8 @@ class Expense extends CI_Controller {
         parent::__construct();
         // Load library dan helper yang dibutuhkan
         $this->load->helper(array('form', 'url'));
-        $this->load->library(array('session', 'upload', 'image_lib'));
+        // TAMBAHKAN LIBRARY 'encryption' DISINI
+        $this->load->library(array('session', 'upload', 'image_lib', 'encryption'));
         
         // Asumsi kamu sudah membuat Expense_model
         $this->load->model('Expense_model'); 
@@ -35,7 +36,6 @@ class Expense extends CI_Controller {
             $nama_file = $upload_data['file_name'];
 
             // 3. Proses Kompresi/Resize Gambar (Optimasi HP)
-            // Mengecilkan foto dari HP agar tidak memberatkan server
             $config_resize['image_library']  = 'gd2';
             $config_resize['source_image']   = './uploads/struk/' . $nama_file;
             $config_resize['maintain_ratio'] = TRUE;
@@ -46,14 +46,15 @@ class Expense extends CI_Controller {
             $this->image_lib->initialize($config_resize);
             $this->image_lib->resize();
 
-            // 4. Siapkan data dari Form Input untuk disimpan ke Database
+            // 4. Siapkan data dari Form Input untuk disimpan ke Database (ENKRIPSI DATA SENSITIF)
             $data_insert = array(
                 'id_user'     => $this->session->userdata('id_user'), // ID dari session login
                 'id_kategori' => $this->input->post('id_kategori', TRUE),
-                'nominal'     => $this->input->post('nominal', TRUE),
-                'deskripsi'   => $this->input->post('deskripsi', TRUE),
                 'tanggal'     => $this->input->post('tanggal', TRUE),
-                'foto_struk'  => $nama_file // Cukup simpan nama filenya saja
+                'foto_struk'  => $nama_file, // Cukup simpan nama filenya saja
+                // PROSES ENKRIPSI NOMINAL & DESKRIPSI SEBELUM MASUK MYSQL
+                'nominal'     => $this->encryption->encrypt($this->input->post('nominal', TRUE)),
+                'deskripsi'   => $this->encryption->encrypt($this->input->post('deskripsi', TRUE))
             );
 
             // 5. Kirim data ke Model
@@ -73,27 +74,45 @@ class Expense extends CI_Controller {
         }
     }
 
-public function riwayat() {
+    public function riwayat() {
         $id_user = $this->session->userdata('id_user');
         
-        // Tarik semua data riwayat transaksi
-        $data['semua_riwayat'] = $this->Expense_model->get_riwayat_transaksi($id_user); 
+        // Tarik semua data riwayat transaksi (Data masih terenkripsi)
+        $riwayat_mentah = $this->Expense_model->get_riwayat_transaksi($id_user); 
         
-        // BARU: Tarik total uang keseluruhan dari database
-        $data['total_keseluruhan'] = $this->Expense_model->get_total_lifetime($id_user);
+        $total_keseluruhan = 0;
+
+        // BUKA KUNCI (DECRYPT) DATA SATU PER SATU DENGAN LOOPING
+        foreach ($riwayat_mentah as $row) {
+            // Dekripsi data
+            $nominal_asli = (float) $this->encryption->decrypt($row->nominal);
+            $deskripsi_asli = $this->encryption->decrypt($row->deskripsi);
+            
+            // Timpa data mentah dengan data yang sudah terbuka kuncinya untuk dikirim ke View
+            $row->nominal = $nominal_asli;
+            $row->deskripsi = $deskripsi_asli;
+
+            // Hitung total manual menggunakan PHP (karena SUM di SQL tidak berfungsi lagi)
+            $total_keseluruhan += $nominal_asli;
+        }
+        
+        // Simpan data yang sudah di-dekripsi untuk dikirim ke View
+        $data['semua_riwayat'] = $riwayat_mentah;
+        $data['total_keseluruhan'] = $total_keseluruhan;
 
         $this->load->view('templates/header');
         $this->load->view('expense/riwayat', $data);
         $this->load->view('templates/footer');
     }
-        public function tambah() {
-            // Memuat antarmuka form tambah pengeluaran beserta navigasinya
-            $this->load->view('templates/header');
-            $this->load->view('expense/tambah');
-            $this->load->view('templates/footer');
-     }
 
-        public function hapus($id_expense) {
+    public function tambah() {
+        // Memuat antarmuka form tambah pengeluaran beserta navigasinya
+        $this->load->view('templates/header');
+        $this->load->view('expense/tambah');
+        $this->load->view('templates/footer');
+    }
+
+    public function hapus($id_expense) {
         $id_user = $this->session->userdata('id_user');
         
         // 1. Tarik data transaksi berdasarkan ID

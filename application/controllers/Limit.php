@@ -9,6 +9,8 @@ class Limit extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('auth/login');
         }
+        // 1. TAMBAHKAN LIBRARY ENKRIPSI
+        $this->load->library('encryption');
     }
 
     public function index()
@@ -21,14 +23,27 @@ class Limit extends CI_Controller {
         $bulan_ini = date('m');
         $tahun_ini = date('Y');
 
-        // Hitung total pengeluaran bulan ini
-        $total_pengeluaran_bulan_ini = $this->db->select_sum('nominal')
+        // ==========================================
+        // 2. TARIK DATA, DEKRIPSI, DAN JUMLAHKAN MANUAL
+        // ==========================================
+        $pengeluaran_bulan_ini = $this->db
             ->where($kolom_user_expenses, $id_pengguna)
             ->where('MONTH(tanggal)', $bulan_ini)
             ->where('YEAR(tanggal)', $tahun_ini)
-            ->get('expenses')->row()->nominal ?? 0;
+            ->get('expenses')->result();
 
-        $limit = $user['limit_pengeluaran'] ?? 0;
+        $total_pengeluaran_bulan_ini = 0;
+        foreach ($pengeluaran_bulan_ini as $ex) {
+            // Dekripsi nominal menjadi angka kembali lalu jumlahkan
+            $total_pengeluaran_bulan_ini += (float) $this->encryption->decrypt($ex->nominal);
+        }
+
+        // Dekripsi Limit Pengeluaran milik User
+        $limit = 0;
+        if (!empty($user['limit_pengeluaran'])) {
+            $limit = (float) $this->encryption->decrypt($user['limit_pengeluaran']);
+        }
+
         $sisa_limit = $limit - $total_pengeluaran_bulan_ini;
         if ($sisa_limit < 0) { $sisa_limit = 0; }
 
@@ -57,8 +72,13 @@ class Limit extends CI_Controller {
         $email = $this->session->userdata('email');
         $limit_baru = $this->input->post('limit_pengeluaran', true);
 
+        // ==========================================
+        // 3. ENKRIPSI LIMIT SEBELUM DISIMPAN KE MYSQL
+        // ==========================================
+        $limit_rahasia = $this->encryption->encrypt($limit_baru);
+
         $this->db->where('email', $email);
-        $this->db->update('users', ['limit_pengeluaran' => $limit_baru]);
+        $this->db->update('users', ['limit_pengeluaran' => $limit_rahasia]);
 
         $this->session->set_flashdata('pesan', '<div class="alert alert-success text-center">Limit pengeluaran berhasil diperbarui!</div>');
         redirect('limit');

@@ -117,7 +117,7 @@
     </div>
 
     <div class="expense-container">
-        <form action="<?= base_url('pemasukan/simpan_pemasukan'); ?>" method="post" id="incomeForm">
+        <form action="<?= base_url('pemasukan/simpan'); ?>" method="post" id="incomeForm">
 
             <!-- NOMINAL -->
             <div class="nominal-section">

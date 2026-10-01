@@ -9,6 +9,8 @@ class Tabungan extends CI_Controller {
         if (!$this->session->userdata('email')) {
             redirect('auth/login');
         }
+        // 1. WAJIB LOAD LIBRARY ENKRIPSI
+        $this->load->library('encryption');
     }
 
     public function index()
@@ -17,9 +19,23 @@ class Tabungan extends CI_Controller {
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $id_pengguna = isset($user['id']) ? $user['id'] : (isset($user['id_user']) ? $user['id_user'] : $user['user_id']);
 
-        // Ambil data tabungan user
-        $data['tabungan'] = $this->db->order_by('tanggal', 'DESC')->get_where('tabungan', ['id_user' => $id_pengguna])->result();
-        $data['total_tabungan'] = $this->db->select_sum('nominal')->get_where('tabungan', ['id_user' => $id_pengguna])->row()->nominal ?? 0;
+        // 2. TARIK DATA TABUNGAN MENTAH (TERENKRIPSI)
+        $tabungan_mentah = $this->db->order_by('tanggal', 'DESC')->get_where('tabungan', ['id_user' => $id_pengguna])->result();
+        
+        $total_tabungan = 0;
+
+        // 3. BUKA KUNCI (DECRYPT) SATU PER SATU
+        foreach ($tabungan_mentah as $t) {
+            $nominal_asli = (float) $this->encryption->decrypt($t->nominal);
+            $total_tabungan += $nominal_asli; // Jumlahkan manual pakai PHP
+            
+            // Timpa data terenkripsi dengan data asli untuk ditampilkan di View
+            $t->nominal = $nominal_asli;
+            $t->deskripsi = $this->encryption->decrypt($t->deskripsi);
+        }
+
+        $data['tabungan'] = $tabungan_mentah;
+        $data['total_tabungan'] = $total_tabungan;
         $data['user'] = $user;
         $data['title'] = 'Tabungan & Limit - Uangku';
 
@@ -34,27 +50,16 @@ class Tabungan extends CI_Controller {
         $user = $this->db->get_where('users', ['email' => $email])->row_array();
         $id_pengguna = isset($user['id']) ? $user['id'] : (isset($user['id_user']) ? $user['id_user'] : $user['user_id']);
 
+        // 4. BUNGKUS NOMINAL & DESKRIPSI DENGAN ENKRIPSI SEBELUM DISIMPAN
         $data = [
             'id_user'   => $id_pengguna,
-            'nominal'   => $this->input->post('nominal', true),
             'tanggal'   => $this->input->post('tanggal', true),
-            'deskripsi' => $this->input->post('deskripsi', true)
+            'nominal'   => $this->encryption->encrypt($this->input->post('nominal', true)),
+            'deskripsi' => $this->encryption->encrypt($this->input->post('deskripsi', true))
         ];
 
         $this->db->insert('tabungan', $data);
         $this->session->set_flashdata('pesan', '<div class="alert alert-success text-center">Setoran tabungan berhasil disimpan!</div>');
-        redirect('tabungan');
-    }
-
-    public function update_limit()
-    {
-        $email = $this->session->userdata('email');
-        $limit_baru = $this->input->post('limit_pengeluaran', true);
-
-        $this->db->where('email', $email);
-        $this->db->update('users', ['limit_pengeluaran' => $limit_baru]);
-
-        $this->session->set_flashdata('pesan', '<div class="alert alert-success text-center">Limit pengeluaran bulanan berhasil diperbarui!</div>');
         redirect('tabungan');
     }
 }
